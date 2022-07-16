@@ -535,7 +535,12 @@ export default function SlateEditor({ documentId, updateSidebarArray }) {
       }
 
       if (event.key === "c" && event.ctrlKey) {
-        console.log("COPYING");
+        navigator.clipboard.writeText(Editor.string(editor, editor.selection));
+      }
+
+      if (event.key === "x" && event.ctrlKey) {
+        navigator.clipboard.writeText(Editor.string(editor, editor.selection));
+        editor.deleteFragment();
       }
     },
     [editor, openMenu, closeMenu, LIST_TYPES, toggleBlock, toggleMark]

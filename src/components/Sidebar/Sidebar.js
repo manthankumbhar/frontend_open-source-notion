@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
+import trashIcon from "public/assets/trash.svg";
 
 export default function Sidebar({ documentsArray, sharedDocumentsArray }) {
   const navigate = useNavigate();
@@ -29,23 +30,59 @@ export default function Sidebar({ documentsArray, sharedDocumentsArray }) {
     setSharedDocuments(sharedDocumentsArray);
   }, [documentsArray, sharedDocumentsArray]);
 
+  const deleteDocument = useCallback(
+    async (documentId) => {
+      let message = "Are you sure you want to delete the document?";
+      if (window.confirm(message) === true) {
+        try {
+          let config = {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          };
+          let res = await axios.delete(
+            `${process.env.REACT_APP_SERVER_LINK}/documents/${documentId}`,
+            {},
+            config
+          );
+          if (res.status === "200") {
+            console.log("success");
+          }
+        } catch (err) {
+          console.log(err.message);
+        }
+      }
+    },
+    [accessToken]
+  );
+
   const documentOptions = documents.map((item, key) => {
     var url = document.URL;
     var documentId = url.substring(url.lastIndexOf("/") + 1);
     return (
-      <Link
-        className={
-          item.id === documentId
-            ? "sidebar__menu--options sidebar__menu--options--active"
-            : "sidebar__menu--options"
-        }
-        key={key}
-        to={`/documents/${item.id}`}
-      >
-        {item.name == null || item.name === ""
-          ? `Document ${key + 1}`
-          : item.name}
-      </Link>
+      <div className="sidebar__menu--container" key={key}>
+        <Link
+          className={
+            item.id === documentId
+              ? "sidebar__menu--options sidebar__menu--options-active"
+              : "sidebar__menu--options"
+          }
+          to={`/documents/${item.id}`}
+        >
+          <div>
+            {item.name == null || item.name === ""
+              ? `Document ${key + 1}`
+              : item.name}
+          </div>
+        </Link>
+        <img
+          src={trashIcon}
+          alt="trash"
+          className="sidebar__menu--options-delete"
+          onClick={() => deleteDocument(item.id)}
+        />
+      </div>
     );
   });
 
@@ -53,19 +90,21 @@ export default function Sidebar({ documentsArray, sharedDocumentsArray }) {
     var url = document.URL;
     var documentId = url.substring(url.lastIndexOf("/") + 1);
     return (
-      <Link
-        className={
-          item.id === documentId
-            ? "sidebar__menu--options sidebar__menu--options--active"
-            : "sidebar__menu--options"
-        }
-        key={key}
-        to={`/documents/${item.id}`}
-      >
-        {item.name == null || item.name === ""
-          ? `Shared Document ${key + 1}`
-          : item.name}
-      </Link>
+      <div className="sidebar__menu--container" key={key}>
+        <Link
+          className={
+            item.id === documentId
+              ? "sidebar__menu--options sidebar__menu--options-active"
+              : "sidebar__menu--options"
+          }
+          key={key}
+          to={`/documents/${item.id}`}
+        >
+          {item.name == null || item.name === ""
+            ? `Shared Document ${key + 1}`
+            : item.name}
+        </Link>
+      </div>
     );
   });
 

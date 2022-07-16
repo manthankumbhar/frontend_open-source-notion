@@ -59,10 +59,17 @@ $background-color: #202020;
       }
     }
 
-    &--options {
-      width: 84%;
-      padding: 0 8%;
+    &--container {
       background-color: #202020;
+
+      &:hover {
+        background-color: #505050;
+      }
+    }
+
+    &--options {
+      width: 100%;
+      padding: 1px 0 1px 1rem;
       color: white;
       height: 2.5rem;
       text-align: left;
@@ -76,11 +83,24 @@ $background-color: #202020;
       display: flex;
       align-items: center;
 
-      &:hover {
-        background-color: #505050;
+      &-delete {
+        display: none;
       }
 
-      &--active {
+      &:hover + &-delete,
+      &-delete:hover {
+        display: block;
+        margin-top: -2.4rem;
+        height: 2rem;
+        color: red;
+        cursor: pointer;
+        padding: 2px 5px;
+        margin-left: auto;
+
+        z-index: 10;
+      }
+
+      &-active {
         background-color: #505050;
         font-weight: bold;
       }
